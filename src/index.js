@@ -2,6 +2,7 @@
 
 import { Engine, Render, World, Vector, Body, Bodies } from 'matter-js'
 import Planet from './planet'
+import Spaceship from './spaceship'
 
 const gravityConstant = 1
 
@@ -18,13 +19,17 @@ let render = Render.create({
 })
 
 let planets = [{ x: 400, y: 300, opts: { isStatic: true } }, { x: 400, y: 600 }]
-  .map(planet => new Planet(planet.x, planet.y, planet.opts).body)
+  .map(planet => new Planet(planet.x, planet.y, planet.opts))
 
-console.log(planets)
+let ship = new Spaceship(100, 100)
 
-World.add(engine.world, planets)
+let things = planets.concat(ship).map(thing => thing.body)
 
-Body.setVelocity(planets[1], Vector.create(0.6, 0))
+console.log(things)
+
+World.add(engine.world, things)
+
+Body.setVelocity(planets[1].body, Vector.create(0.6, 0))
 
 Render.run(render)
 
@@ -32,41 +37,22 @@ let done = false
 
 tick()
 
-
-
-// forAllPairs(planets, emitGravity)
-
 function tick (lastTime) {
-  applyGravityToBodies(planets)
+  applyGravityToBodies(things)
   window.requestAnimationFrame(tick)
   Engine.update(engine, lastTime ? (performance.now() - lastTime) * 10 : 1000 / 60)
 }
 
-function forAllPairs (array, iterator) { // this don't work good yet
-  array.slice(0, -1).forEach((planet, i) => {
-    array.slice(i, -1).forEach((planet, j) => {
-      iterator(array[i], array[j + 1])
-    })
-  })
-}
-
-
 function applyGravityToBodies (bodies) {
   for (let i = 0; i < bodies.length; i++) {
-    let thisBody = bodies[i]
-    if (!done) console.log('thisBody outer',thisBody, thisBody.isStatic)
-    if (thisBody.isStatic) continue
+    if (bodies[i].isStatic) continue
     let forceSum = Vector.create(0, 0)
-
     
     for (let j = 0; j < bodies.length; j++) {
       if (j === i) continue
       
       let thisBody = bodies[i]
       let otherBody = bodies[j]
-      if (!done) console.log('thisBody outer',thisBody)
-      if (!done) console.log('otherBody outer',otherBody)
-      done = true
       let xDist = thisBody.position.x - otherBody.position.x
       let yDist = thisBody.position.y - otherBody.position.y
       let distance = Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2))
@@ -77,6 +63,7 @@ function applyGravityToBodies (bodies) {
       forceSum.y -= Math.abs(forceMag * (yDist / distance)) * Math.sign(yDist)
     }
     
+    let thisBody = bodies[i]
     Body.setVelocity(thisBody, {
       x: thisBody.velocity.x + forceSum.x / thisBody.mass,
       y: thisBody.velocity.y + forceSum.y / thisBody.mass
