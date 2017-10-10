@@ -18,7 +18,7 @@ let render = Render.create({
   }
 })
 
-let planets = [{ x: 400, y: 300, opts: { isStatic: true } }, { x: 400, y: 600 }]
+let planets = [{ x: 400, y: 300, opts: { isStatic: true } }]
   .map(planet => new Planet(planet.x, planet.y, planet.opts))
 
 let ship = new Spaceship(100, 100)
@@ -29,7 +29,7 @@ console.log(things)
 
 World.add(engine.world, things)
 
-Body.setVelocity(planets[1].body, Vector.create(0.6, 0))
+// Body.setVelocity(planets[1].body, Vector.create(0.6, 0))
 
 Render.run(render)
 

@@ -15,15 +15,27 @@ const keys = {
 export default class Spaceship {
   constructor (x = 0, y = 0, opts = {}) {
     let planetOpts = Object.assign({}, defaults, opts)
-    console.log(planetOpts)
-    this._body = Bodies.polygon(x, y, 3, planetOpts.size, planetOpts)
+    this._body = Bodies.fromVertices(x, y, [{x: 2, y: 6}, {x: 4, y: 0}, {x: 0, y: 0}], planetOpts)
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'ArrowUp') this.thrust(Vector.create(0, 0.0001))
-      if (event.key === 'ArrowDown') this.thrust(Vector.create(0, -0.0001))
-      if (event.key === 'ArrowLeft') this.rotate('left')
-      if (event.key === 'ArrowRight') this.rotate('right')
-
-      console.log('keypress event\n\n' + 'key: ' + event.key)
+      console.log(event.key)
+      switch (event.key) {
+        case 'ArrowUp': {
+          this.thrust(Vector.create(0, 0.001))
+          break
+        }
+        case 'ArrowDown': {
+          this.thrust(Vector.create(0, -0.001))
+          break
+        }
+        case 'ArrowLeft': {
+          this.rotate('left')
+          break
+        }
+        case 'ArrowRight': {
+          this.rotate('right')
+          break
+        }
+      }
     })
   }
 
