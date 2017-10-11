@@ -33,8 +33,6 @@ World.add(engine.world, things)
 
 Render.run(render)
 
-let done = false
-
 tick()
 
 function tick (lastTime) {

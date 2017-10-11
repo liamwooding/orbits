@@ -10,7 +10,6 @@ const defaults = {
 export default class Planet {
   constructor (x = 0, y = 0, opts = {}) {
     let planetOpts = Object.assign({}, defaults, opts)
-    console.log(planetOpts)
     this._body = Bodies.circle(x, y, planetOpts.size, planetOpts)
   }
 
