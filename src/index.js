@@ -3,10 +3,10 @@
 import { Engine, Render, World, Vector, Body, Bodies } from 'matter-js'
 import Planet from './planet'
 import Spaceship from './spaceship'
+export let engine = Engine.create()
 
 const gravityConstant = 1
 
-let engine = Engine.create()
 engine.world.gravity.y = 0
 
 let render = Render.create({
