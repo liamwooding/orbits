@@ -7,9 +7,8 @@ const defaults = {
   frictionAir: 0
 }
 
-const keys = {
-  38: 'up',
-  40: 'down'
+const config = {
+  rotateLimit: 0.1
 }
 
 export default class Spaceship {
@@ -18,14 +17,9 @@ export default class Spaceship {
     this._body = Bodies.fromVertices(x, y, [{x: 2, y: 6}, {x: 4, y: 0}, {x: 0, y: 0}], planetOpts)
     
     document.addEventListener('keydown', (event) => {
-      console.log(event.key)
       switch (event.key) {
         case 'ArrowUp': {
-          this.thrust(Vector.create(0, 0.001))
-          break
-        }
-        case 'ArrowDown': {
-          this.thrust(Vector.create(0, -0.001))
+          this.thrust()
           break
         }
         case 'ArrowLeft': {
@@ -40,11 +34,11 @@ export default class Spaceship {
     })
 
     let lastTimestamp = 0
-    Events.on(engine, 'afterUpdate', e => {
+    Events.on(engine, 'beforeUpdate', e => {
       let dt = e.timestamp - lastTimestamp
       lastTimestamp = e.timestamp
 
-      let angularDamping = dt / 10000
+      let angularDamping = dt / 1000
       if (this.body.angularVelocity < 0) {
         let newAngularVelocity = this.body.angularVelocity + angularDamping
         if (newAngularVelocity > 0) newAngularVelocity = 0
@@ -65,13 +59,14 @@ export default class Spaceship {
     this._body = body
   }
 
-  thrust (vector) {
-    Body.applyForce(this.body, this.body.position, Vector.rotate(vector, this.body.angle))
+  thrust (force = 0.0001) {
+    Body.applyForce(this.body, this.body.position, Vector.rotate(Vector.create(0, force), this.body.angle))
   }
 
-  rotate (direction, force = 0.01) {
+  rotate (direction, force = 0.1) {
     let angularVelocity = this.body.angularVelocity + (direction === 'right' ? force : 0 - force)
-    if (angularVelocity > 50) angularVelocity = 50
+    if (angularVelocity > config.rotateLimit) angularVelocity = config.rotateLimit
+    else if (angularVelocity < -config.rotateLimit) angularVelocity = -config.rotateLimit
     Body.setAngularVelocity(this.body, angularVelocity)
   }
 }
