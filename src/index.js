@@ -3,11 +3,12 @@
 import { Engine, Render, World, Vector, Body, Bodies } from 'matter-js'
 import Planet from './planet'
 import Spaceship from './spaceship'
+import { Gravity } from './gravity'
 export let engine = Engine.create()
 
-const gravityConstant = 1
-
 engine.world.gravity.y = 0
+
+Gravity.init(engine)
 
 let render = Render.create({
   element: document.body,
@@ -25,9 +26,8 @@ let ship = new Spaceship(100, 100)
 
 let things = planets.concat(ship).map(thing => thing.body)
 
-console.log(things)
-
 World.add(engine.world, things)
+Gravity.addBodies(things)
 
 // Body.setVelocity(planets[1].body, Vector.create(0.6, 0))
 
@@ -36,7 +36,7 @@ Render.run(render)
 tick()
 
 function tick (lastTime) {
-  applyGravityToBodies(things)
+  // applyGravityToBodies(things)
   window.requestAnimationFrame(tick)
   Engine.update(engine, lastTime ? (performance.now() - lastTime) * 10 : 1000 / 60)
 }
