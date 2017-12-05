@@ -10,7 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "matter-js": "^0.13.0"
+    "matter-js": "^0.13.0",
+    "victor": "^1.1.0"
   },
   "devDependencies": {
     "webpack": "^3.6.0"

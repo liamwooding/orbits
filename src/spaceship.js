@@ -1,6 +1,8 @@
 import { World, Bodies, Body, Events, Vector } from 'matter-js'
+import Victor from 'victor'
 import { engine } from './index.js'
 import { Input } from './input'
+import OrbitProjector from './orbit-projector'
 
 const defaults = {
   size: 5,
@@ -14,9 +16,12 @@ const config = {
 
 export default class Spaceship {
   constructor (x = 0, y = 0, opts = {}) {
-    let planetOpts = Object.assign({}, defaults, opts)
-    this._body = Bodies.fromVertices(x, y, [{x: 2, y: 6}, {x: 4, y: 0}, {x: 0, y: 0}], planetOpts)
+    let shipOpts = Object.assign({}, defaults, opts)
+    this._body = Bodies.fromVertices(x, y, [{x: 2, y: 6}, {x: 4, y: 0}, {x: 0, y: 0}], shipOpts)
 
+    this._projector = new OrbitProjector(this.body)
+    console.log(this._projector.body)
+    
     let lastTimestamp = 0
     Events.on(engine, 'beforeUpdate', e => {
       let dt = e.timestamp - lastTimestamp
@@ -45,6 +50,14 @@ export default class Spaceship {
 
   thrust (force = 0.0001) {
     Body.applyForce(this.body, this.body.position, Vector.rotate(Vector.create(0, force), this.body.angle))
+    if (this._projector) {
+      Body.setPosition(this._projector.body, this.body.position)
+      Body.setVelocity(this._projector.body, {
+        x: this.body.velocity.x * 10,
+        y: this.body.velocity.y * 10
+      })
+    }
+    console.log('yeah', this.body.velocity, this._projector.body.velocity)
   }
 
   rotate (direction, force = 0.1) {

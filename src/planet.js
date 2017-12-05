@@ -4,7 +4,8 @@ import engine from './index.js'
 const defaults = {
   size: 100,
   mass: 100,
-  frictionAir: 0
+  frictionAir: 0,
+  hasGravity: true
 }
 
 export default class Planet {

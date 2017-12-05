@@ -1,22 +1,16 @@
 import { World, Bodies, Body, Events, Vector } from 'matter-js'
+import { Gravity } from './gravity'
 import { engine } from './index.js'
 
-export default class OrbitProjector (projectedBody) {
-  constructor (x = 0, y = 0, opts = {}) {
-    this._body = Bodies.polygon(body.position.x, body.position.y, 3, 3, { opts: { isSensor: true } })
-
-    startProjection()
-
-    // let lastTimestamp = 0
-    // Events.on(engine, 'beforeUpdate', e => {
-    //   let dt = e.timestamp - lastTimestamp
-    //   lastTimestamp = e.timestamp
-    // })
-  }
-
-  startProjection () {
-    World.add(engine.world, this.body)
-    Body.setPosition(this.body, projectedBody.position)
+export default class OrbitProjector {
+  constructor (body) {
+    this._body = Bodies.circle(body.position.x, body.position.y, 10, {
+      isSensor: true,
+      isProjector: true,
+      timeMultiplier: 10
+    })
+    World.addBody(engine.world, this.body)
+    Gravity.addBodies(this.body)
   }
 
   get body () {
